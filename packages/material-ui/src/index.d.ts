@@ -72,6 +72,19 @@ export type PropInjector<InjectedProps, AdditionalProps = {}> = <
   Omit<JSX.LibraryManagedAttributes<C, PropsOf<C>>, keyof InjectedProps> & AdditionalProps
 >;
 
+type InjectedPropsOf<PI extends PropInjector<any, any>> = PI extends PropInjector<infer IP, any> ? IP : never;
+type AdditionalPropsOf<I extends PropInjector<any, any>> = I extends PropInjector<any, infer AP> ? AP : never;
+
+/**
+ * Helper type alias that can be used to determine the type of a generic
+ * component after applying a higher-order component.
+ *
+ * See https://stackoverflow.com/a/52573647 for an example of how to use this.
+ * (TODO: Move that to Material UI examples.)
+ */
+export type PostInjectionProps<PI extends PropInjector<any, any>, P extends ConsistentWith<P, InjectedPropsOf<PI>>> =
+  Omit<P, keyof InjectedPropsOf<PI>> & AdditionalPropsOf<PI>;
+
 /**
  * Like `T & U`, but using the value types from `U` where their properties overlap.
  *
